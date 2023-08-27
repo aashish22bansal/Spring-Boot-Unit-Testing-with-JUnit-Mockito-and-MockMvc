@@ -1,0 +1,13 @@
+eclipse.preferences.version=1
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.artifactId=MVCExampleTestingApplication
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.bootVersion=3.1.2
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.description=MVC Example Testing Application for Learning JUnit
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.groupId=com.aashish22bansal.junit
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.javaVersion=17
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.language=java
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.name=MVCExampleTestingApplication
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.packageName=com.aashish22bansal.junit.test
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.packaging=jar
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.type=MAVEN
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.version=0.0.1
+org.springframework.ide.eclipse.boot.wizard.initializr.url=https\://start.spring.io\n
