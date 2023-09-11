@@ -3,10 +3,20 @@ package com.aashish22bansal.junit.test.models;
 import org.springframework.stereotype.Component;
 
 public class CollegeStudent implements Student{
+
+    private int id;
     private String firstName;
     private String lastName;
     private String emailAddress;
     private StudentGrades studentGrades;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public CollegeStudent(){
         // Constructor Code
@@ -64,5 +74,9 @@ public class CollegeStudent implements Student{
     @Override
     public String getFullName(){
         return getFirstName() + " " + getLastName();
+    }
+
+    private String getFirstNameAndId(){
+        return getFirstName() + " " + getId();
     }
 }
