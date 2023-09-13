@@ -6,10 +6,12 @@ import jakarta.persistence.*;
 @Table(name = "math_grade")
 public class MathGrade implements Grade {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @Column(name="student_id")
     private int studentId;
+
     @Column(name="grade")
     private double grade;
 

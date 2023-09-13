@@ -28,7 +28,11 @@ public class GradebookController {
 
 	@PostMapping(value = "/")
 	public String createStudent(@ModelAttribute("student") CollegeStudent student, Model m){
-		studentAndGradeService.createStudent(student.getFirstname(), student.getLastname(), student.getEmailAddress());
+		studentAndGradeService.createStudent(
+				student.getFirstname(),
+				student.getLastname(),
+				student.getEmailAddress()
+		);
 		// Creating students, then adding them to a list and then adding them as a Model Attribute
 		Iterable<CollegeStudent> collegeStudentIterable = studentAndGradeService.getGradebook();
 		//Adding this as a Model Attribute and provide a reference for collegeStudentIteable
@@ -58,40 +62,51 @@ public class GradebookController {
 			return "error";
 		}
 
-		GradebookCollegeStudent studentEntity = studentAndGradeService.studentInformation(id);
-		m.addAttribute("student", studentEntity);
-
-		// Adding the Math Average to the Model
-		if(studentEntity.getStudentGrades().getMathGradeResults().size() > 0){
-			m.addAttribute("mathAverage", studentEntity.getStudentGrades().findGradePointAverage(
-					studentEntity.getStudentGrades().getMathGradeResults()
-			));
-		}
-		else{
-			// For the Students who do not have a math grade available, then we will say N/A (Not Applicable)
-			m.addAttribute("mathAverage", "N/A");
-		}
-		// Adding the Science Average to the Model
-		if(studentEntity.getStudentGrades().getScienceGradeResults().size() > 0){
-			m.addAttribute("scienceAverage", studentEntity.getStudentGrades().findGradePointAverage(
-					studentEntity.getStudentGrades().getScienceGradeResults()
-			));
-		}
-		else{
-			// For the Students who do not have a science grade available, then we will say N/A (Not Applicable)
-			m.addAttribute("scienceAverage", "N/A");
-		}
-		// Adding the History Average to the Model
-		if(studentEntity.getStudentGrades().getHistoryGradeResults().size() > 0){
-			m.addAttribute("historyAverage", studentEntity.getStudentGrades().findGradePointAverage(
-					studentEntity.getStudentGrades().getHistoryGradeResults()
-			));
-		}
-		else{
-			m.addAttribute("historyAverage", "N/A");
-		}
+		// Calling the Configured Method in StudentAndGradeService
+		studentAndGradeService.configureStudentInformationModel(id, m);
 
 		// Returning the View Name
+		return "studentInformation";
+	}
+
+	@PostMapping(value = "/grades")
+	public String createGrade(
+			@RequestParam("grade") double grade,
+			@RequestParam("gradeType") String gradeType,
+			@RequestParam("studentId") int studentId,
+			Model m
+	){
+		if(!studentAndGradeService.checkIfStudentIsNull(studentId)){
+			return "error";
+		}
+
+		// Creating the grade using StudentAndGradeService
+		boolean success = studentAndGradeService.createGrade(grade, studentId, gradeType);
+
+		// Checking if the grade was created successfully
+		if(!success){
+			return "error";
+		}
+
+		// Calling the Configured method
+		studentAndGradeService.configureStudentInformationModel(studentId, m);
+
+		// Returning the View Name
+		return "studentInformation";
+	}
+
+	@GetMapping("/grades/{id}/{gradeType}")
+	public String deleteGrade(@PathVariable int id, @PathVariable String gradeType, Model m){
+		// Deleting grade using StudentAndGradeService
+		int studentId = studentAndGradeService.deleteGrade(id, gradeType);
+
+		// Checking if there is any student with the received ID
+		if(studentId == 0){
+			return "error";
+		}
+
+		studentAndGradeService.configureStudentInformationModel(studentId, m);
+
 		return "studentInformation";
 	}
 

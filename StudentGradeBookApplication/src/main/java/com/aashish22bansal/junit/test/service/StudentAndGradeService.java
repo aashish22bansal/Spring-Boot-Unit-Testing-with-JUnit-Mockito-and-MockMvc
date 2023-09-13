@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +112,6 @@ public class StudentAndGradeService {
                 historyGradesDao.save(historyGrade);
                 return true;
             }
-            return false;
         }
         return false;
     }
@@ -132,7 +132,7 @@ public class StudentAndGradeService {
             // Deleting the Grade
             mathGradesDao.deleteById(id);
         }
-        else if(gradeType.equals("science")){
+        if(gradeType.equals("science")){
             Optional<ScienceGrade> grade = scienceGradesDao.findById(id);
             // If the grade is not present, then
             if(!grade.isPresent()){
@@ -144,7 +144,7 @@ public class StudentAndGradeService {
             // Deleting the Grade
             scienceGradesDao.deleteById(id);
         }
-        else if(gradeType.equals("history")){
+        if(gradeType.equals("history")){
             Optional<HistoryGrade> grade = historyGradesDao.findById(id);
             // If the grade is not present, then
             if(!grade.isPresent()){
@@ -181,11 +181,11 @@ public class StudentAndGradeService {
          * are looping through the Iterable and then adding them to the list.
          */
         List<Grade> mathGradesList = new ArrayList<>();
-        mathGradesList.forEach(mathGradesList::add);
+        mathGrades.forEach(mathGradesList::add);
         List<Grade> scienceGradesList = new ArrayList<>();
-        scienceGradesList.forEach(scienceGradesList::add);
+        scienceGrades.forEach(scienceGradesList::add);
         List<Grade> historyGradesList = new ArrayList<>();
-        historyGradesList.forEach(historyGradesList::add);
+        historyGrades.forEach(historyGradesList::add);
 
         // Set the values for the Grades
         studentGrades.setMathGradeResults(mathGradesList);
@@ -204,5 +204,50 @@ public class StudentAndGradeService {
         );
 
         return gradebookCollegeStudent;
+    }
+
+    public void configureStudentInformationModel(int studentId, Model m){
+        // Retrieving Student Information
+        GradebookCollegeStudent studentEntity = studentInformation(studentId);
+        m.addAttribute("student", studentEntity);
+
+        // Adding the Math Average to the Model
+        if(studentEntity.getStudentGrades().getMathGradeResults().size() > 0){
+            m.addAttribute(
+                    "mathAverage",
+                    studentEntity.getStudentGrades().findGradePointAverage(
+                            studentEntity.getStudentGrades().getMathGradeResults()
+                    )
+            );
+        }
+        else{
+            // For the Students who do not have a math grade available, then we will say N/A (Not Applicable)
+            m.addAttribute("mathAverage", "N/A");
+        }
+        // Adding the Science Average to the Model
+        if(studentEntity.getStudentGrades().getScienceGradeResults().size() > 0){
+            m.addAttribute(
+                    "scienceAverage",
+                    studentEntity.getStudentGrades().findGradePointAverage(
+                            studentEntity.getStudentGrades().getScienceGradeResults()
+                    )
+            );
+        }
+        else{
+            // For the Students who do not have a science grade available, then we will say N/A (Not Applicable)
+            m.addAttribute("scienceAverage", "N/A");
+        }
+        // Adding the History Average to the Model
+        if(studentEntity.getStudentGrades().getHistoryGradeResults().size() > 0){
+            m.addAttribute(
+                    "historyAverage",
+                    studentEntity.getStudentGrades().findGradePointAverage(
+                            studentEntity.getStudentGrades().getHistoryGradeResults()
+                    )
+            );
+        }
+        else{
+            m.addAttribute("historyAverage", "N/A");
+        }
     }
 }

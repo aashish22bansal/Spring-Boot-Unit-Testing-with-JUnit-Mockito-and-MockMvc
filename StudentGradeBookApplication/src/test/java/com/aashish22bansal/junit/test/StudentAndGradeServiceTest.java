@@ -26,7 +26,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestPropertySource("/application.properties")
+@TestPropertySource("/application-test.properties")
 @SpringBootTest
 public class StudentAndGradeServiceTest {
 
@@ -73,10 +73,10 @@ public class StudentAndGradeServiceTest {
     private String sqlDeleteHistoryGrade;
 
 
-    @BeforeAll
-    public static void setup(){
-
-    }
+//    @BeforeAll
+//    public static void setup(){
+//
+//    }
 
     @BeforeEach
     public void setupDatabase(){
@@ -109,9 +109,9 @@ public class StudentAndGradeServiceTest {
     public void deleteStudentService(){
         // Retrieving the student with ID 1
         Optional<CollegeStudent> deletedCollegeStudent = studentDao.findById(6);
-        Optional<MathGrade> deletedMathGrade = mathGradesDao.findById(1);
-        Optional<ScienceGrade> deletedScienceGrade = scienceGradesDao.findById(1);
-        Optional<HistoryGrade> deletedHistoryGrade = historyGradesDao.findById(1);
+        Optional<MathGrade> deletedMathGrade = mathGradesDao.findById(6);
+        Optional<ScienceGrade> deletedScienceGrade = scienceGradesDao.findById(6);
+        Optional<HistoryGrade> deletedHistoryGrade = historyGradesDao.findById(6);
 
         // Checking if we have actually found the student or not
         assertTrue(deletedCollegeStudent.isPresent(), "Return True");
@@ -154,10 +154,6 @@ public class StudentAndGradeServiceTest {
 
     @Test
     public void createGradeService(){
-//        jdbcTemplate.execute("DELETE FROM student");
-        jdbcTemplate.execute("DELETE FROM math_grade");
-        jdbcTemplate.execute("DELETE FROM science_grade");
-        jdbcTemplate.execute("DELETE FROM history_grade");
         // Create the grade
         assertTrue(studentService.createGrade(80.50, 6, "math"));
         assertTrue(studentService.createGrade(80.50, 6, "science"));
@@ -184,27 +180,27 @@ public class StudentAndGradeServiceTest {
     @Test
     public void createGradeServiceReturnFalse(){
         // Invalid Student Marks
-        assertFalse(studentService.createGrade(105, 1, "math"));
+        assertFalse(studentService.createGrade(105, 6, "math"));
         // Invalid Student Marks
-        assertFalse(studentService.createGrade(-5, 1, "math"));
+        assertFalse(studentService.createGrade(-5, 6, "math"));
         // Invalid Student ID
         assertFalse(studentService.createGrade(80.50, 2, "math"));
         // Invalid Subject
-        assertFalse(studentService.createGrade(80.50, 1, "literature"));
+        assertFalse(studentService.createGrade(80.50, 6, "literature"));
     }
 
     @Test
     public void deleteGradeService(){
         assertEquals(
-                1, studentService.deleteGrade(1, "math"),
+                6, studentService.deleteGrade(6, "math"),
                 "Returns Student ID after Delete!"
         );
         assertEquals(
-                1, studentService.deleteGrade(1, "science"),
+                6, studentService.deleteGrade(6, "science"),
                 "Returns Student ID after Delete!"
         );
         assertEquals(
-                1, studentService.deleteGrade(1, "history"),
+                6, studentService.deleteGrade(6, "history"),
                 "Returns Student ID after Delete!"
         );
     }
@@ -218,7 +214,7 @@ public class StudentAndGradeServiceTest {
         );
         // Invalid Subject
         assertEquals(
-                0, studentService.deleteGrade(1, "literature"),
+                0, studentService.deleteGrade(6, "literature"),
                 "No Student should have a literature class!"
         );
     }
@@ -243,8 +239,9 @@ public class StudentAndGradeServiceTest {
                 "analyst.aashish@gmail.com", gradebookCollegeStudent.getEmailAddress(),
                 "Student Email Address Received!"
         );
-        // Verifying the Student Information - Number of Grades for a given Subjects
 
+        // Verifying the Student Information - Number of Grades for a given Subjects
+        assertEquals(1, gradebookCollegeStudent.getStudentGrades().getMathGradeResults().size(), "Received a 1");
         assertTrue(
                 gradebookCollegeStudent.getStudentGrades().getMathGradeResults().size() == 1,
                 "Student Math Grade not Received!"
